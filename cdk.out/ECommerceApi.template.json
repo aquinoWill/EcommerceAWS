@@ -1,0 +1,301 @@
+{
+ "Resources": {
+  "ECommerceApiLogs16FEC884": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "RetentionInDays": 731
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "ECommerceApi/ECommerceApiLogs/Resource"
+   }
+  },
+  "ECommerceApiE79CFB4A": {
+   "Type": "AWS::ApiGateway::RestApi",
+   "Properties": {
+    "Name": "ECommerceApi"
+   },
+   "Metadata": {
+    "aws:cdk:path": "ECommerceApi/ECommerceApi/Resource"
+   }
+  },
+  "ECommerceApiCloudWatchRoleA0000002": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "apigateway.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ECommerceApi/ECommerceApi/CloudWatchRole/Resource"
+   }
+  },
+  "ECommerceApiAccountA3F17E7C": {
+   "Type": "AWS::ApiGateway::Account",
+   "Properties": {
+    "CloudWatchRoleArn": {
+     "Fn::GetAtt": [
+      "ECommerceApiCloudWatchRoleA0000002",
+      "Arn"
+     ]
+    }
+   },
+   "DependsOn": [
+    "ECommerceApiE79CFB4A"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ECommerceApi/ECommerceApi/Account"
+   }
+  },
+  "ECommerceApiDeploymentC537DBB62d7fcf0536c72c9036cce997f7a21505": {
+   "Type": "AWS::ApiGateway::Deployment",
+   "Properties": {
+    "RestApiId": {
+     "Ref": "ECommerceApiE79CFB4A"
+    },
+    "Description": "Automatically created by the RestApi construct"
+   },
+   "DependsOn": [
+    "ECommerceApiproductsGET39FAC467",
+    "ECommerceApiproducts320180E3"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ECommerceApi/ECommerceApi/Deployment/Resource"
+   }
+  },
+  "ECommerceApiDeploymentStageprod34BEADF8": {
+   "Type": "AWS::ApiGateway::Stage",
+   "Properties": {
+    "RestApiId": {
+     "Ref": "ECommerceApiE79CFB4A"
+    },
+    "AccessLogSetting": {
+     "DestinationArn": {
+      "Fn::GetAtt": [
+       "ECommerceApiLogs16FEC884",
+       "Arn"
+      ]
+     },
+     "Format": "{\"requestId\":\"$context.requestId\",\"ip\":\"$context.identity.sourceIp\",\"user\":\"$context.identity.user\",\"caller\":\"$context.identity.caller\",\"requestTime\":\"$context.requestTime\",\"httpMethod\":\"$context.httpMethod\",\"resourcePath\":\"$context.resourcePath\",\"status\":\"$context.status\",\"protocol\":\"$context.protocol\",\"responseLength\":\"$context.responseLength\"}"
+    },
+    "DeploymentId": {
+     "Ref": "ECommerceApiDeploymentC537DBB62d7fcf0536c72c9036cce997f7a21505"
+    },
+    "StageName": "prod"
+   },
+   "DependsOn": [
+    "ECommerceApiAccountA3F17E7C"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ECommerceApi/ECommerceApi/DeploymentStage.prod/Resource"
+   }
+  },
+  "ECommerceApiproducts320180E3": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "ECommerceApiE79CFB4A",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "products",
+    "RestApiId": {
+     "Ref": "ECommerceApiE79CFB4A"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ECommerceApi/ECommerceApi/Default/products/Resource"
+   }
+  },
+  "ECommerceApiproductsGETApiPermissionECommerceApi3E70358DGETproducts33045144": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::ImportValue": "ProductsApp:ExportsOutputFnGetAttProductsFetchFunctionAA0035D8Arn1DA1098A"
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:sa-east-1:015550306275:",
+       {
+        "Ref": "ECommerceApiE79CFB4A"
+       },
+       "/",
+       {
+        "Ref": "ECommerceApiDeploymentStageprod34BEADF8"
+       },
+       "/GET/products"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ECommerceApi/ECommerceApi/Default/products/GET/ApiPermission.ECommerceApi3E70358D.GET..products"
+   }
+  },
+  "ECommerceApiproductsGETApiPermissionTestECommerceApi3E70358DGETproducts900FFBF1": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::ImportValue": "ProductsApp:ExportsOutputFnGetAttProductsFetchFunctionAA0035D8Arn1DA1098A"
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:sa-east-1:015550306275:",
+       {
+        "Ref": "ECommerceApiE79CFB4A"
+       },
+       "/test-invoke-stage/GET/products"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ECommerceApi/ECommerceApi/Default/products/GET/ApiPermission.Test.ECommerceApi3E70358D.GET..products"
+   }
+  },
+  "ECommerceApiproductsGET39FAC467": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "HttpMethod": "GET",
+    "ResourceId": {
+     "Ref": "ECommerceApiproducts320180E3"
+    },
+    "RestApiId": {
+     "Ref": "ECommerceApiE79CFB4A"
+    },
+    "AuthorizationType": "NONE",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:sa-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::ImportValue": "ProductsApp:ExportsOutputFnGetAttProductsFetchFunctionAA0035D8Arn1DA1098A"
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ECommerceApi/ECommerceApi/Default/products/GET/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/02OwW7CMAyGn4V76gHbhSPbJC6bNsEDIJN6nSGpoyYBoSrvPlfZtJ78/b/t317DegnLBd5iY9tL4/gE4yGhvRi1jqOTLsL4Jt1ukBzMy1f/x8Vg4A4T3fAO455i2gaeBma4tVZyn8wrBSd3T4rqzpRe6mjyKuiq5MHSM8Z/8ZtZ+Z3St7STVakYRq/nxdU5rcU49KcWQfUnDZ5jZOnL1P7IKeQ0Dyyml5bgHB+uqydYbeBxcY7MzaBvsyfY1/oDXOh/2CYBAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "ECommerceApi/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "ECommerceApiEndpointA4C226BB": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "ECommerceApiE79CFB4A"
+      },
+      ".execute-api.sa-east-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "ECommerceApiDeploymentStageprod34BEADF8"
+      },
+      "/"
+     ]
+    ]
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

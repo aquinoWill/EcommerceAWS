@@ -1,5 +1,5 @@
 {
-  "version": "21.0.0",
+  "version": "17.0.0",
   "artifacts": {
     "Tree": {
       "type": "cdk:tree",
@@ -7,64 +7,234 @@
         "file": "tree.json"
       }
     },
-    "EcommerceAwsStack.assets": {
+    "ProductsApp.assets": {
       "type": "cdk:asset-manifest",
       "properties": {
-        "file": "EcommerceAwsStack.assets.json",
+        "file": "ProductsApp.assets.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
       }
     },
-    "EcommerceAwsStack": {
+    "ProductsApp": {
       "type": "aws:cloudformation:stack",
-      "environment": "aws://unknown-account/unknown-region",
+      "environment": "aws://015550306275/sa-east-1",
       "properties": {
-        "templateFile": "EcommerceAwsStack.template.json",
+        "templateFile": "ProductsApp.template.json",
+        "tags": {
+          "cost": "ECommerce",
+          "team": "SiecolaCode"
+        },
         "validateOnSynth": false,
-        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
-        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/b22c8d32db911c8486fa5704834932bb4de5738b2bc6eed4cb4a43972788d378.json",
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::015550306275:role/cdk-hnb659fds-deploy-role-015550306275-sa-east-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::015550306275:role/cdk-hnb659fds-cfn-exec-role-015550306275-sa-east-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-015550306275-sa-east-1/faf6886013d4120de68cbab3896fd3481a7a8988674511c54422e238798fd391.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
-          "EcommerceAwsStack.assets"
+          "ProductsApp.assets"
         ],
         "lookupRole": {
-          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-${AWS::Region}",
+          "arn": "arn:${AWS::Partition}:iam::015550306275:role/cdk-hnb659fds-lookup-role-015550306275-sa-east-1",
           "requiresBootstrapStackVersion": 8,
           "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
         }
       },
       "dependencies": [
-        "EcommerceAwsStack.assets"
+        "ProductsApp.assets"
       ],
       "metadata": {
-        "/EcommerceAwsStack/CDKMetadata/Default": [
+        "/ProductsApp": [
+          {
+            "type": "aws:cdk:stack-tags",
+            "data": [
+              {
+                "Key": "cost",
+                "Value": "ECommerce"
+              },
+              {
+                "Key": "team",
+                "Value": "SiecolaCode"
+              }
+            ]
+          }
+        ],
+        "/ProductsApp/ProductsFetchFunction/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ProductsFetchFunctionServiceRoleD0214BFB"
+          }
+        ],
+        "/ProductsApp/ProductsFetchFunction/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ProductsFetchFunctionAA0035D8"
+          }
+        ],
+        "/ProductsApp/CDKMetadata/Default": [
           {
             "type": "aws:cdk:logicalId",
             "data": "CDKMetadata"
           }
         ],
-        "/EcommerceAwsStack/CDKMetadata/Condition": [
+        "/ProductsApp/Exports/Output{\"Fn::GetAtt\":[\"ProductsFetchFunctionAA0035D8\",\"Arn\"]}": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "CDKMetadataAvailable"
+            "data": "ExportsOutputFnGetAttProductsFetchFunctionAA0035D8Arn1DA1098A"
           }
         ],
-        "/EcommerceAwsStack/BootstrapVersion": [
+        "/ProductsApp/BootstrapVersion": [
           {
             "type": "aws:cdk:logicalId",
             "data": "BootstrapVersion"
           }
         ],
-        "/EcommerceAwsStack/CheckBootstrapVersion": [
+        "/ProductsApp/CheckBootstrapVersion": [
           {
             "type": "aws:cdk:logicalId",
             "data": "CheckBootstrapVersion"
           }
         ]
       },
-      "displayName": "EcommerceAwsStack"
+      "displayName": "ProductsApp"
+    },
+    "ECommerceApi.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "ECommerceApi.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "ECommerceApi": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://015550306275/sa-east-1",
+      "properties": {
+        "templateFile": "ECommerceApi.template.json",
+        "tags": {
+          "cost": "ECommerce",
+          "team": "SiecolaCode"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::015550306275:role/cdk-hnb659fds-deploy-role-015550306275-sa-east-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::015550306275:role/cdk-hnb659fds-cfn-exec-role-015550306275-sa-east-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-015550306275-sa-east-1/3c304d309ef3504d49497e7708e8aee1aa0a94a3872598f0ecaa8a8b057cd471.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "ECommerceApi.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::015550306275:role/cdk-hnb659fds-lookup-role-015550306275-sa-east-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "ProductsApp",
+        "ECommerceApi.assets"
+      ],
+      "metadata": {
+        "/ECommerceApi": [
+          {
+            "type": "aws:cdk:stack-tags",
+            "data": [
+              {
+                "Key": "cost",
+                "Value": "ECommerce"
+              },
+              {
+                "Key": "team",
+                "Value": "SiecolaCode"
+              }
+            ]
+          }
+        ],
+        "/ECommerceApi/ECommerceApiLogs/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ECommerceApiLogs16FEC884"
+          }
+        ],
+        "/ECommerceApi/ECommerceApi/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ECommerceApiE79CFB4A"
+          }
+        ],
+        "/ECommerceApi/ECommerceApi/CloudWatchRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ECommerceApiCloudWatchRoleA0000002"
+          }
+        ],
+        "/ECommerceApi/ECommerceApi/Account": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ECommerceApiAccountA3F17E7C"
+          }
+        ],
+        "/ECommerceApi/ECommerceApi/Deployment/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ECommerceApiDeploymentC537DBB62d7fcf0536c72c9036cce997f7a21505"
+          }
+        ],
+        "/ECommerceApi/ECommerceApi/DeploymentStage.prod/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ECommerceApiDeploymentStageprod34BEADF8"
+          }
+        ],
+        "/ECommerceApi/ECommerceApi/Endpoint": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ECommerceApiEndpointA4C226BB"
+          }
+        ],
+        "/ECommerceApi/ECommerceApi/Default/products/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ECommerceApiproducts320180E3"
+          }
+        ],
+        "/ECommerceApi/ECommerceApi/Default/products/GET/ApiPermission.ECommerceApi3E70358D.GET..products": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ECommerceApiproductsGETApiPermissionECommerceApi3E70358DGETproducts33045144"
+          }
+        ],
+        "/ECommerceApi/ECommerceApi/Default/products/GET/ApiPermission.Test.ECommerceApi3E70358D.GET..products": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ECommerceApiproductsGETApiPermissionTestECommerceApi3E70358DGETproducts900FFBF1"
+          }
+        ],
+        "/ECommerceApi/ECommerceApi/Default/products/GET/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ECommerceApiproductsGET39FAC467"
+          }
+        ],
+        "/ECommerceApi/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/ECommerceApi/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/ECommerceApi/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "ECommerceApi"
     }
   }
 }
