@@ -1,7 +1,7 @@
 {
   "version": "17.0.0",
   "files": {
-    "3c304d309ef3504d49497e7708e8aee1aa0a94a3872598f0ecaa8a8b057cd471": {
+    "ffaa048c6935b00ab37a61542c4727d8ff0f07578c29964d029874ce7a2c8cdf": {
       "source": {
         "path": "ECommerceApi.template.json",
         "packaging": "file"
@@ -9,7 +9,7 @@
       "destinations": {
         "015550306275-sa-east-1": {
           "bucketName": "cdk-hnb659fds-assets-015550306275-sa-east-1",
-          "objectKey": "3c304d309ef3504d49497e7708e8aee1aa0a94a3872598f0ecaa8a8b057cd471.json",
+          "objectKey": "ffaa048c6935b00ab37a61542c4727d8ff0f07578c29964d029874ce7a2c8cdf.json",
           "region": "sa-east-1",
           "assumeRoleArn": "arn:${AWS::Partition}:iam::015550306275:role/cdk-hnb659fds-file-publishing-role-015550306275-sa-east-1"
         }

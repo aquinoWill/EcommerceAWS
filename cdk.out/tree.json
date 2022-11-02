@@ -16,6 +16,54 @@
         "id": "ProductsApp",
         "path": "ProductsApp",
         "children": {
+          "ProductsDdb": {
+            "id": "ProductsDdb",
+            "path": "ProductsApp/ProductsDdb",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "ProductsApp/ProductsDdb/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::DynamoDB::Table",
+                  "aws:cdk:cloudformation:props": {
+                    "keySchema": [
+                      {
+                        "attributeName": "id",
+                        "keyType": "HASH"
+                      }
+                    ],
+                    "attributeDefinitions": [
+                      {
+                        "attributeName": "id",
+                        "attributeType": "S"
+                      }
+                    ],
+                    "provisionedThroughput": {
+                      "readCapacityUnits": 1,
+                      "writeCapacityUnits": 1
+                    },
+                    "tableName": "products"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_dynamodb.CfnTable",
+                  "version": "2.20.0"
+                }
+              },
+              "ScalingRole": {
+                "id": "ScalingRole",
+                "path": "ProductsApp/ProductsDdb/ScalingRole",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.20.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_dynamodb.Table",
+              "version": "2.20.0"
+            }
+          },
           "ProductsFetchFunction": {
             "id": "ProductsFetchFunction",
             "path": "ProductsApp/ProductsFetchFunction",
@@ -62,6 +110,64 @@
                       "fqn": "aws-cdk-lib.aws_iam.CfnRole",
                       "version": "2.20.0"
                     }
+                  },
+                  "DefaultPolicy": {
+                    "id": "DefaultPolicy",
+                    "path": "ProductsApp/ProductsFetchFunction/ServiceRole/DefaultPolicy",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "ProductsApp/ProductsFetchFunction/ServiceRole/DefaultPolicy/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                          "aws:cdk:cloudformation:props": {
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": [
+                                    "dynamodb:BatchGetItem",
+                                    "dynamodb:GetRecords",
+                                    "dynamodb:GetShardIterator",
+                                    "dynamodb:Query",
+                                    "dynamodb:GetItem",
+                                    "dynamodb:Scan",
+                                    "dynamodb:ConditionCheckItem",
+                                    "dynamodb:DescribeTable"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Resource": [
+                                    {
+                                      "Fn::GetAtt": [
+                                        "ProductsDdb1827BBAA",
+                                        "Arn"
+                                      ]
+                                    },
+                                    {
+                                      "Ref": "AWS::NoValue"
+                                    }
+                                  ]
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "policyName": "ProductsFetchFunctionServiceRoleDefaultPolicyFE926ADE",
+                            "roles": [
+                              {
+                                "Ref": "ProductsFetchFunctionServiceRoleD0214BFB"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                          "version": "2.20.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Policy",
+                      "version": "2.20.0"
+                    }
                   }
                 },
                 "constructInfo": {
@@ -103,7 +209,7 @@
                   "aws:cdk:cloudformation:props": {
                     "code": {
                       "s3Bucket": "cdk-hnb659fds-assets-015550306275-sa-east-1",
-                      "s3Key": "9186e67f24d21bdf7a72fce1f40550f0e632be24d40c7e4dfb6aa3a6061df323.zip"
+                      "s3Key": "2107c89a365efe2f6e793ae17b152507c2c3c8b42573a84fd3feaf6768fec874.zip"
                     },
                     "role": {
                       "Fn::GetAtt": [
@@ -113,10 +219,189 @@
                     },
                     "environment": {
                       "variables": {
+                        "PRODUCTS_DBB": {
+                          "Ref": "ProductsDdb1827BBAA"
+                        },
                         "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1"
                       }
                     },
                     "functionName": "ProductsFetchFunction",
+                    "handler": "index.handler",
+                    "memorySize": 128,
+                    "runtime": "nodejs14.x",
+                    "timeout": 5
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                  "version": "2.20.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_lambda_nodejs.NodejsFunction",
+              "version": "2.20.0"
+            }
+          },
+          "ProductsAdminFunction": {
+            "id": "ProductsAdminFunction",
+            "path": "ProductsApp/ProductsAdminFunction",
+            "children": {
+              "ServiceRole": {
+                "id": "ServiceRole",
+                "path": "ProductsApp/ProductsAdminFunction/ServiceRole",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "ProductsApp/ProductsAdminFunction/ServiceRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "lambda.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.20.0"
+                    }
+                  },
+                  "DefaultPolicy": {
+                    "id": "DefaultPolicy",
+                    "path": "ProductsApp/ProductsAdminFunction/ServiceRole/DefaultPolicy",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "ProductsApp/ProductsAdminFunction/ServiceRole/DefaultPolicy/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                          "aws:cdk:cloudformation:props": {
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": [
+                                    "dynamodb:BatchWriteItem",
+                                    "dynamodb:PutItem",
+                                    "dynamodb:UpdateItem",
+                                    "dynamodb:DeleteItem",
+                                    "dynamodb:DescribeTable"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Resource": [
+                                    {
+                                      "Fn::GetAtt": [
+                                        "ProductsDdb1827BBAA",
+                                        "Arn"
+                                      ]
+                                    },
+                                    {
+                                      "Ref": "AWS::NoValue"
+                                    }
+                                  ]
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "policyName": "ProductsAdminFunctionServiceRoleDefaultPolicy8F7C660B",
+                            "roles": [
+                              {
+                                "Ref": "ProductsAdminFunctionServiceRole29E44CC6"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                          "version": "2.20.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Policy",
+                      "version": "2.20.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.20.0"
+                }
+              },
+              "Code": {
+                "id": "Code",
+                "path": "ProductsApp/ProductsAdminFunction/Code",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "ProductsApp/ProductsAdminFunction/Code/Stage",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.AssetStaging",
+                      "version": "2.20.0"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "ProductsApp/ProductsAdminFunction/Code/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                      "version": "2.20.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                  "version": "2.20.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "ProductsApp/ProductsAdminFunction/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                  "aws:cdk:cloudformation:props": {
+                    "code": {
+                      "s3Bucket": "cdk-hnb659fds-assets-015550306275-sa-east-1",
+                      "s3Key": "0f6daf784c3c4d1e6b148aa455bd4d072049e79376a92dc9ab619d620e0036a9.zip"
+                    },
+                    "role": {
+                      "Fn::GetAtt": [
+                        "ProductsAdminFunctionServiceRole29E44CC6",
+                        "Arn"
+                      ]
+                    },
+                    "environment": {
+                      "variables": {
+                        "PRODUCTS_DBB": {
+                          "Ref": "ProductsDdb1827BBAA"
+                        },
+                        "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1"
+                      }
+                    },
+                    "functionName": "ProductsAdminFunction",
                     "handler": "index.handler",
                     "memorySize": 128,
                     "runtime": "nodejs14.x",
@@ -159,6 +444,14 @@
               "Output{\"Fn::GetAtt\":[\"ProductsFetchFunctionAA0035D8\",\"Arn\"]}": {
                 "id": "Output{\"Fn::GetAtt\":[\"ProductsFetchFunctionAA0035D8\",\"Arn\"]}",
                 "path": "ProductsApp/Exports/Output{\"Fn::GetAtt\":[\"ProductsFetchFunctionAA0035D8\",\"Arn\"]}",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.20.0"
+                }
+              },
+              "Output{\"Fn::GetAtt\":[\"ProductsAdminFunction04EE52A3\",\"Arn\"]}": {
+                "id": "Output{\"Fn::GetAtt\":[\"ProductsAdminFunction04EE52A3\",\"Arn\"]}",
+                "path": "ProductsApp/Exports/Output{\"Fn::GetAtt\":[\"ProductsAdminFunction04EE52A3\",\"Arn\"]}",
                 "constructInfo": {
                   "fqn": "aws-cdk-lib.CfnOutput",
                   "version": "2.20.0"
@@ -340,7 +633,7 @@
                           "format": "{\"requestId\":\"$context.requestId\",\"ip\":\"$context.identity.sourceIp\",\"user\":\"$context.identity.user\",\"caller\":\"$context.identity.caller\",\"requestTime\":\"$context.requestTime\",\"httpMethod\":\"$context.httpMethod\",\"resourcePath\":\"$context.resourcePath\",\"status\":\"$context.status\",\"protocol\":\"$context.protocol\",\"responseLength\":\"$context.responseLength\"}"
                         },
                         "deploymentId": {
-                          "Ref": "ECommerceApiDeploymentC537DBB62d7fcf0536c72c9036cce997f7a21505"
+                          "Ref": "ECommerceApiDeploymentC537DBB6e17499f783fb8a6bd67db7211064a318"
                         },
                         "stageName": "prod"
                       }
@@ -498,6 +791,528 @@
                                         ":apigateway:sa-east-1:lambda:path/2015-03-31/functions/",
                                         {
                                           "Fn::ImportValue": "ProductsApp:ExportsOutputFnGetAttProductsFetchFunctionAA0035D8Arn1DA1098A"
+                                        },
+                                        "/invocations"
+                                      ]
+                                    ]
+                                  },
+                                  "integrationHttpMethod": "POST"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                              "version": "2.20.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                          "version": "2.20.0"
+                        }
+                      },
+                      "{id}": {
+                        "id": "{id}",
+                        "path": "ECommerceApi/ECommerceApi/Default/products/{id}",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "ECommerceApi/ECommerceApi/Default/products/{id}/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::ApiGateway::Resource",
+                              "aws:cdk:cloudformation:props": {
+                                "parentId": {
+                                  "Ref": "ECommerceApiproducts320180E3"
+                                },
+                                "pathPart": "{id}",
+                                "restApiId": {
+                                  "Ref": "ECommerceApiE79CFB4A"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.CfnResource",
+                              "version": "2.20.0"
+                            }
+                          },
+                          "GET": {
+                            "id": "GET",
+                            "path": "ECommerceApi/ECommerceApi/Default/products/{id}/GET",
+                            "children": {
+                              "ApiPermission.ECommerceApi3E70358D.GET..products.{id}": {
+                                "id": "ApiPermission.ECommerceApi3E70358D.GET..products.{id}",
+                                "path": "ECommerceApi/ECommerceApi/Default/products/{id}/GET/ApiPermission.ECommerceApi3E70358D.GET..products.{id}",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                                  "aws:cdk:cloudformation:props": {
+                                    "action": "lambda:InvokeFunction",
+                                    "functionName": {
+                                      "Fn::ImportValue": "ProductsApp:ExportsOutputFnGetAttProductsFetchFunctionAA0035D8Arn1DA1098A"
+                                    },
+                                    "principal": "apigateway.amazonaws.com",
+                                    "sourceArn": {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          "arn:",
+                                          {
+                                            "Ref": "AWS::Partition"
+                                          },
+                                          ":execute-api:sa-east-1:015550306275:",
+                                          {
+                                            "Ref": "ECommerceApiE79CFB4A"
+                                          },
+                                          "/",
+                                          {
+                                            "Ref": "ECommerceApiDeploymentStageprod34BEADF8"
+                                          },
+                                          "/GET/products/*"
+                                        ]
+                                      ]
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                                  "version": "2.20.0"
+                                }
+                              },
+                              "ApiPermission.Test.ECommerceApi3E70358D.GET..products.{id}": {
+                                "id": "ApiPermission.Test.ECommerceApi3E70358D.GET..products.{id}",
+                                "path": "ECommerceApi/ECommerceApi/Default/products/{id}/GET/ApiPermission.Test.ECommerceApi3E70358D.GET..products.{id}",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                                  "aws:cdk:cloudformation:props": {
+                                    "action": "lambda:InvokeFunction",
+                                    "functionName": {
+                                      "Fn::ImportValue": "ProductsApp:ExportsOutputFnGetAttProductsFetchFunctionAA0035D8Arn1DA1098A"
+                                    },
+                                    "principal": "apigateway.amazonaws.com",
+                                    "sourceArn": {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          "arn:",
+                                          {
+                                            "Ref": "AWS::Partition"
+                                          },
+                                          ":execute-api:sa-east-1:015550306275:",
+                                          {
+                                            "Ref": "ECommerceApiE79CFB4A"
+                                          },
+                                          "/test-invoke-stage/GET/products/*"
+                                        ]
+                                      ]
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                                  "version": "2.20.0"
+                                }
+                              },
+                              "Resource": {
+                                "id": "Resource",
+                                "path": "ECommerceApi/ECommerceApi/Default/products/{id}/GET/Resource",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                                  "aws:cdk:cloudformation:props": {
+                                    "httpMethod": "GET",
+                                    "resourceId": {
+                                      "Ref": "ECommerceApiproductsidBA77D237"
+                                    },
+                                    "restApiId": {
+                                      "Ref": "ECommerceApiE79CFB4A"
+                                    },
+                                    "authorizationType": "NONE",
+                                    "integration": {
+                                      "type": "AWS_PROXY",
+                                      "uri": {
+                                        "Fn::Join": [
+                                          "",
+                                          [
+                                            "arn:",
+                                            {
+                                              "Ref": "AWS::Partition"
+                                            },
+                                            ":apigateway:sa-east-1:lambda:path/2015-03-31/functions/",
+                                            {
+                                              "Fn::ImportValue": "ProductsApp:ExportsOutputFnGetAttProductsFetchFunctionAA0035D8Arn1DA1098A"
+                                            },
+                                            "/invocations"
+                                          ]
+                                        ]
+                                      },
+                                      "integrationHttpMethod": "POST"
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                                  "version": "2.20.0"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                              "version": "2.20.0"
+                            }
+                          },
+                          "PUT": {
+                            "id": "PUT",
+                            "path": "ECommerceApi/ECommerceApi/Default/products/{id}/PUT",
+                            "children": {
+                              "ApiPermission.ECommerceApi3E70358D.PUT..products.{id}": {
+                                "id": "ApiPermission.ECommerceApi3E70358D.PUT..products.{id}",
+                                "path": "ECommerceApi/ECommerceApi/Default/products/{id}/PUT/ApiPermission.ECommerceApi3E70358D.PUT..products.{id}",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                                  "aws:cdk:cloudformation:props": {
+                                    "action": "lambda:InvokeFunction",
+                                    "functionName": {
+                                      "Fn::ImportValue": "ProductsApp:ExportsOutputFnGetAttProductsAdminFunction04EE52A3Arn64FF9CD5"
+                                    },
+                                    "principal": "apigateway.amazonaws.com",
+                                    "sourceArn": {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          "arn:",
+                                          {
+                                            "Ref": "AWS::Partition"
+                                          },
+                                          ":execute-api:sa-east-1:015550306275:",
+                                          {
+                                            "Ref": "ECommerceApiE79CFB4A"
+                                          },
+                                          "/",
+                                          {
+                                            "Ref": "ECommerceApiDeploymentStageprod34BEADF8"
+                                          },
+                                          "/PUT/products/*"
+                                        ]
+                                      ]
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                                  "version": "2.20.0"
+                                }
+                              },
+                              "ApiPermission.Test.ECommerceApi3E70358D.PUT..products.{id}": {
+                                "id": "ApiPermission.Test.ECommerceApi3E70358D.PUT..products.{id}",
+                                "path": "ECommerceApi/ECommerceApi/Default/products/{id}/PUT/ApiPermission.Test.ECommerceApi3E70358D.PUT..products.{id}",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                                  "aws:cdk:cloudformation:props": {
+                                    "action": "lambda:InvokeFunction",
+                                    "functionName": {
+                                      "Fn::ImportValue": "ProductsApp:ExportsOutputFnGetAttProductsAdminFunction04EE52A3Arn64FF9CD5"
+                                    },
+                                    "principal": "apigateway.amazonaws.com",
+                                    "sourceArn": {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          "arn:",
+                                          {
+                                            "Ref": "AWS::Partition"
+                                          },
+                                          ":execute-api:sa-east-1:015550306275:",
+                                          {
+                                            "Ref": "ECommerceApiE79CFB4A"
+                                          },
+                                          "/test-invoke-stage/PUT/products/*"
+                                        ]
+                                      ]
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                                  "version": "2.20.0"
+                                }
+                              },
+                              "Resource": {
+                                "id": "Resource",
+                                "path": "ECommerceApi/ECommerceApi/Default/products/{id}/PUT/Resource",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                                  "aws:cdk:cloudformation:props": {
+                                    "httpMethod": "PUT",
+                                    "resourceId": {
+                                      "Ref": "ECommerceApiproductsidBA77D237"
+                                    },
+                                    "restApiId": {
+                                      "Ref": "ECommerceApiE79CFB4A"
+                                    },
+                                    "authorizationType": "NONE",
+                                    "integration": {
+                                      "type": "AWS_PROXY",
+                                      "uri": {
+                                        "Fn::Join": [
+                                          "",
+                                          [
+                                            "arn:",
+                                            {
+                                              "Ref": "AWS::Partition"
+                                            },
+                                            ":apigateway:sa-east-1:lambda:path/2015-03-31/functions/",
+                                            {
+                                              "Fn::ImportValue": "ProductsApp:ExportsOutputFnGetAttProductsAdminFunction04EE52A3Arn64FF9CD5"
+                                            },
+                                            "/invocations"
+                                          ]
+                                        ]
+                                      },
+                                      "integrationHttpMethod": "POST"
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                                  "version": "2.20.0"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                              "version": "2.20.0"
+                            }
+                          },
+                          "DELETE": {
+                            "id": "DELETE",
+                            "path": "ECommerceApi/ECommerceApi/Default/products/{id}/DELETE",
+                            "children": {
+                              "ApiPermission.ECommerceApi3E70358D.DELETE..products.{id}": {
+                                "id": "ApiPermission.ECommerceApi3E70358D.DELETE..products.{id}",
+                                "path": "ECommerceApi/ECommerceApi/Default/products/{id}/DELETE/ApiPermission.ECommerceApi3E70358D.DELETE..products.{id}",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                                  "aws:cdk:cloudformation:props": {
+                                    "action": "lambda:InvokeFunction",
+                                    "functionName": {
+                                      "Fn::ImportValue": "ProductsApp:ExportsOutputFnGetAttProductsAdminFunction04EE52A3Arn64FF9CD5"
+                                    },
+                                    "principal": "apigateway.amazonaws.com",
+                                    "sourceArn": {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          "arn:",
+                                          {
+                                            "Ref": "AWS::Partition"
+                                          },
+                                          ":execute-api:sa-east-1:015550306275:",
+                                          {
+                                            "Ref": "ECommerceApiE79CFB4A"
+                                          },
+                                          "/",
+                                          {
+                                            "Ref": "ECommerceApiDeploymentStageprod34BEADF8"
+                                          },
+                                          "/DELETE/products/*"
+                                        ]
+                                      ]
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                                  "version": "2.20.0"
+                                }
+                              },
+                              "ApiPermission.Test.ECommerceApi3E70358D.DELETE..products.{id}": {
+                                "id": "ApiPermission.Test.ECommerceApi3E70358D.DELETE..products.{id}",
+                                "path": "ECommerceApi/ECommerceApi/Default/products/{id}/DELETE/ApiPermission.Test.ECommerceApi3E70358D.DELETE..products.{id}",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                                  "aws:cdk:cloudformation:props": {
+                                    "action": "lambda:InvokeFunction",
+                                    "functionName": {
+                                      "Fn::ImportValue": "ProductsApp:ExportsOutputFnGetAttProductsAdminFunction04EE52A3Arn64FF9CD5"
+                                    },
+                                    "principal": "apigateway.amazonaws.com",
+                                    "sourceArn": {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          "arn:",
+                                          {
+                                            "Ref": "AWS::Partition"
+                                          },
+                                          ":execute-api:sa-east-1:015550306275:",
+                                          {
+                                            "Ref": "ECommerceApiE79CFB4A"
+                                          },
+                                          "/test-invoke-stage/DELETE/products/*"
+                                        ]
+                                      ]
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                                  "version": "2.20.0"
+                                }
+                              },
+                              "Resource": {
+                                "id": "Resource",
+                                "path": "ECommerceApi/ECommerceApi/Default/products/{id}/DELETE/Resource",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                                  "aws:cdk:cloudformation:props": {
+                                    "httpMethod": "DELETE",
+                                    "resourceId": {
+                                      "Ref": "ECommerceApiproductsidBA77D237"
+                                    },
+                                    "restApiId": {
+                                      "Ref": "ECommerceApiE79CFB4A"
+                                    },
+                                    "authorizationType": "NONE",
+                                    "integration": {
+                                      "type": "AWS_PROXY",
+                                      "uri": {
+                                        "Fn::Join": [
+                                          "",
+                                          [
+                                            "arn:",
+                                            {
+                                              "Ref": "AWS::Partition"
+                                            },
+                                            ":apigateway:sa-east-1:lambda:path/2015-03-31/functions/",
+                                            {
+                                              "Fn::ImportValue": "ProductsApp:ExportsOutputFnGetAttProductsAdminFunction04EE52A3Arn64FF9CD5"
+                                            },
+                                            "/invocations"
+                                          ]
+                                        ]
+                                      },
+                                      "integrationHttpMethod": "POST"
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                                  "version": "2.20.0"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                              "version": "2.20.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.Resource",
+                          "version": "2.20.0"
+                        }
+                      },
+                      "POST": {
+                        "id": "POST",
+                        "path": "ECommerceApi/ECommerceApi/Default/products/POST",
+                        "children": {
+                          "ApiPermission.ECommerceApi3E70358D.POST..products": {
+                            "id": "ApiPermission.ECommerceApi3E70358D.POST..products",
+                            "path": "ECommerceApi/ECommerceApi/Default/products/POST/ApiPermission.ECommerceApi3E70358D.POST..products",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                              "aws:cdk:cloudformation:props": {
+                                "action": "lambda:InvokeFunction",
+                                "functionName": {
+                                  "Fn::ImportValue": "ProductsApp:ExportsOutputFnGetAttProductsAdminFunction04EE52A3Arn64FF9CD5"
+                                },
+                                "principal": "apigateway.amazonaws.com",
+                                "sourceArn": {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      "arn:",
+                                      {
+                                        "Ref": "AWS::Partition"
+                                      },
+                                      ":execute-api:sa-east-1:015550306275:",
+                                      {
+                                        "Ref": "ECommerceApiE79CFB4A"
+                                      },
+                                      "/",
+                                      {
+                                        "Ref": "ECommerceApiDeploymentStageprod34BEADF8"
+                                      },
+                                      "/POST/products"
+                                    ]
+                                  ]
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                              "version": "2.20.0"
+                            }
+                          },
+                          "ApiPermission.Test.ECommerceApi3E70358D.POST..products": {
+                            "id": "ApiPermission.Test.ECommerceApi3E70358D.POST..products",
+                            "path": "ECommerceApi/ECommerceApi/Default/products/POST/ApiPermission.Test.ECommerceApi3E70358D.POST..products",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                              "aws:cdk:cloudformation:props": {
+                                "action": "lambda:InvokeFunction",
+                                "functionName": {
+                                  "Fn::ImportValue": "ProductsApp:ExportsOutputFnGetAttProductsAdminFunction04EE52A3Arn64FF9CD5"
+                                },
+                                "principal": "apigateway.amazonaws.com",
+                                "sourceArn": {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      "arn:",
+                                      {
+                                        "Ref": "AWS::Partition"
+                                      },
+                                      ":execute-api:sa-east-1:015550306275:",
+                                      {
+                                        "Ref": "ECommerceApiE79CFB4A"
+                                      },
+                                      "/test-invoke-stage/POST/products"
+                                    ]
+                                  ]
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                              "version": "2.20.0"
+                            }
+                          },
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "ECommerceApi/ECommerceApi/Default/products/POST/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                              "aws:cdk:cloudformation:props": {
+                                "httpMethod": "POST",
+                                "resourceId": {
+                                  "Ref": "ECommerceApiproducts320180E3"
+                                },
+                                "restApiId": {
+                                  "Ref": "ECommerceApiE79CFB4A"
+                                },
+                                "authorizationType": "NONE",
+                                "integration": {
+                                  "type": "AWS_PROXY",
+                                  "uri": {
+                                    "Fn::Join": [
+                                      "",
+                                      [
+                                        "arn:",
+                                        {
+                                          "Ref": "AWS::Partition"
+                                        },
+                                        ":apigateway:sa-east-1:lambda:path/2015-03-31/functions/",
+                                        {
+                                          "Fn::ImportValue": "ProductsApp:ExportsOutputFnGetAttProductsAdminFunction04EE52A3Arn64FF9CD5"
                                         },
                                         "/invocations"
                                       ]

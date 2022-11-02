@@ -1,21 +1,35 @@
 {
   "version": "17.0.0",
   "files": {
-    "9186e67f24d21bdf7a72fce1f40550f0e632be24d40c7e4dfb6aa3a6061df323": {
+    "2107c89a365efe2f6e793ae17b152507c2c3c8b42573a84fd3feaf6768fec874": {
       "source": {
-        "path": "asset.9186e67f24d21bdf7a72fce1f40550f0e632be24d40c7e4dfb6aa3a6061df323",
+        "path": "asset.2107c89a365efe2f6e793ae17b152507c2c3c8b42573a84fd3feaf6768fec874",
         "packaging": "zip"
       },
       "destinations": {
         "015550306275-sa-east-1": {
           "bucketName": "cdk-hnb659fds-assets-015550306275-sa-east-1",
-          "objectKey": "9186e67f24d21bdf7a72fce1f40550f0e632be24d40c7e4dfb6aa3a6061df323.zip",
+          "objectKey": "2107c89a365efe2f6e793ae17b152507c2c3c8b42573a84fd3feaf6768fec874.zip",
           "region": "sa-east-1",
           "assumeRoleArn": "arn:${AWS::Partition}:iam::015550306275:role/cdk-hnb659fds-file-publishing-role-015550306275-sa-east-1"
         }
       }
     },
-    "faf6886013d4120de68cbab3896fd3481a7a8988674511c54422e238798fd391": {
+    "0f6daf784c3c4d1e6b148aa455bd4d072049e79376a92dc9ab619d620e0036a9": {
+      "source": {
+        "path": "asset.0f6daf784c3c4d1e6b148aa455bd4d072049e79376a92dc9ab619d620e0036a9",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "015550306275-sa-east-1": {
+          "bucketName": "cdk-hnb659fds-assets-015550306275-sa-east-1",
+          "objectKey": "0f6daf784c3c4d1e6b148aa455bd4d072049e79376a92dc9ab619d620e0036a9.zip",
+          "region": "sa-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::015550306275:role/cdk-hnb659fds-file-publishing-role-015550306275-sa-east-1"
+        }
+      }
+    },
+    "6139411ced24c9e947163881ec8cd688272889bc467a9fa52f83ae4c12514b6d": {
       "source": {
         "path": "ProductsApp.template.json",
         "packaging": "file"
@@ -23,7 +37,7 @@
       "destinations": {
         "015550306275-sa-east-1": {
           "bucketName": "cdk-hnb659fds-assets-015550306275-sa-east-1",
-          "objectKey": "faf6886013d4120de68cbab3896fd3481a7a8988674511c54422e238798fd391.json",
+          "objectKey": "6139411ced24c9e947163881ec8cd688272889bc467a9fa52f83ae4c12514b6d.json",
           "region": "sa-east-1",
           "assumeRoleArn": "arn:${AWS::Partition}:iam::015550306275:role/cdk-hnb659fds-file-publishing-role-015550306275-sa-east-1"
         }
